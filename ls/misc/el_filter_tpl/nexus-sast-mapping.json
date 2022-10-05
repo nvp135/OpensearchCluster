@@ -1,0 +1,33 @@
+{
+  "size": 0,
+  "query": {
+    "terms": {
+      "bitbucket_commit_hash.keyword": [ %{[@metadata][query][bitbucket_commit_hash]} ]
+    }
+  },
+  "aggs": {
+    "commit": {
+      "terms": {
+        "field": "bitbucket_commit_hash.keyword",
+        "size": 100
+      },
+      "aggs": {
+        "last_run": {
+          "top_hits": {
+            "size": 1,
+            "sort": [{"@timestamp": "desc"}],
+            "_source": {
+              "includes": [
+                "current_hash",
+                "sast_pass",
+                "bitbucket_commit_hash",
+                "sast_run",
+                "no_critical_defects"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

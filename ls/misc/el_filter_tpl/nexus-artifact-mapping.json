@@ -1,0 +1,8 @@
+{
+  "size": %{[@metadata][query][result_size]},
+  "query": {
+    "terms": {
+      "_id": [ %{[@metadata][query][nexus_artifact]} ]
+    }
+  }
+}

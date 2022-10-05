@@ -1,0 +1,20 @@
+{
+  "size": %{[@metadata][query][result_size]},
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "terms": {
+            "email_sigma.keyword": [ %{[@metadata][query][email]} ]
+          }
+        },
+        {
+          "terms": {
+            "email_alpha.keyword": [ %{[@metadata][query][email]} ]
+          }
+        }
+      ],
+      "minimum_should_match" : 1
+    }
+  }
+}

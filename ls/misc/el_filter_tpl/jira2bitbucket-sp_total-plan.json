@@ -1,0 +1,121 @@
+{
+  "size" : 0,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "query_string": {
+            "query": "((changelog_items.field.keyword:Sprint OR changelog_items.field.keyword:\"Story Points\" OR changelog_items.field.keyword:Key OR issue_event_type_name.keyword:issue_created) AND sprint.id:%{[sprint][id]}) OR changelog_items.from:%{[sprint][id]}"
+          }
+        },
+        {
+          "term": {
+            "issuetype.subtask": false
+          }
+        },
+        {
+          "term": {
+            "segment": "%{[segment]}"
+          }
+        },
+        {
+          "range" : {
+            "@timestamp" : {
+              "lte": "%{[sprint][startDate]}"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "issues": {
+      "terms": {
+        "size": 1000,
+        "script" : {
+          "lang": "painless",
+          "source": "doc['changelog_items.field.keyword'].value == 'Key' ? [doc['changelog_items.fromString.keyword'].value,doc['issue_key.keyword'].value] : doc['issue_key.keyword'].value"
+        }
+      },
+      "aggs": {
+        "group_docs": {
+          "top_hits": {
+            "size": 1,
+            "sort": [{"@timestamp": "desc"}],
+            "_source": {
+              "includes": [
+                "chapter",
+                "chapter_code",
+                "competence",
+                "competence_code",
+                "issue_key",
+                "org_unit1",
+                "org_unit2",
+                "org_unit3",
+                "org_unit4",
+                "product",
+                "product_code",
+                "program",
+                "squad",
+                "squad_code",
+                "squad_type",
+                "tribe",
+                "tribe_code",
+                "story_points",
+                "status.statusCategory.key"
+              ]
+            }
+          }
+        },
+        "last_change": {
+          "max": {
+            "field": "@timestamp"
+          }
+        },
+        "filter_sprint": {
+          "filter": {
+            "term": {
+              "sprint.id": "%{[sprint][id]}"
+            }
+          },
+          "aggs": {
+            "last_sprint_date": {
+              "max": {
+                "field": "@timestamp"
+              }
+            }
+          }
+        },
+        "filter_key": {
+          "filter": {
+            "bool": {
+              "must_not": {
+                "term": {
+                  "changelog_items.field.keyword": "Key"
+                }
+              }
+            }
+          },
+          "aggs": {
+            "last_prev_key_date": {
+              "max": {
+                "field": "@timestamp"
+              }
+            }
+          }
+        },
+        "sprint_issues": {
+          "bucket_selector": {
+            "buckets_path": {
+              "last_change": "last_change",
+              "last_sprint_date": "filter_sprint>last_sprint_date",
+              "last_prev_key_date": "filter_key>last_prev_key_date"
+            },
+            "gap_policy": "insert_zeros",
+            "script": "params.last_change == params.last_sprint_date && (params.last_change == params.last_prev_key_date || params.last_prev_key_date == 0)"
+          }
+        }
+      }
+    }
+  }
+}

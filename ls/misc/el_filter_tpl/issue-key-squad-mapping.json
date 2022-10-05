@@ -1,0 +1,15 @@
+{
+  "size": 1000,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "terms": {
+            "issue_key.keyword": [ %{[@metadata][query][issue_key]} ]
+          }
+        }
+      ]
+    }
+  },
+  "_source": ["squad", "squad_code", "tribe", "tribe_code"]
+}

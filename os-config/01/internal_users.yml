@@ -1,0 +1,23 @@
+---
+# This is the internal user database
+# The hash value is a bcrypt hash and can be generated with plugin/tools/hash.sh
+
+_meta:
+  type: "internalusers"
+  config_version: 2
+
+# Define your internal users here
+
+## Demo users
+
+admin:
+  hash: "$2y$12$j5.oQm6PbtEUDb6Ggyogou9ix.W/wM8GRCH5in2YC5MY6DOPF4CDW"
+  reserved: true
+  backend_roles:
+  - "admin"
+  description: "Demo admin user"
+
+kibanaserver:
+  hash: "$2y$12$vM2hEz8dG15nWlqhBOd8ted9Tdn6UnQfGcZCBcxu8b3hPfw7NiskK"
+  reserved: true
+  description: "Demo OpenSearch Dashboards user"

@@ -1,0 +1,26 @@
+{
+  "size": 1,
+  "sort": [
+    {
+      "@timestamp": {
+        "order": "desc"
+      }
+    }
+  ],
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "terms": {
+            "nexus_artifact.keyword": [ %{[@metadata][query][nexus_artifact]} ]
+          }
+        },
+        {
+          "query_string": {
+            "query": "eventType.keyword:build AND NOT result.keyword:INPROGRESS"
+          }
+        }
+      ]
+    }
+  }
+}
