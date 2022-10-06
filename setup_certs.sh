@@ -33,7 +33,7 @@ openssl x509 -req -in certs/ca/admin.csr -CA certs/ca/ca.pem -CAkey certs/ca/ca.
 openssl genrsa -out certs/os/os-temp.key 2048
 openssl pkcs8 -inform PEM -outform PEM -in certs/os/os-temp.key -topk8 -nocrypt -v1 PBE-SHA1-3DES -out certs/os/os.key
 openssl req -new -subj "$CERTS_DN/CN=OS" -key certs/os/os.key -out certs/os/os.csr
-printf "subjectAltName=DNS:localhost,IP:127.0.0.1,DNS:os,DNS:os,DNS:os01,DNS:os02,DNS:os03" | openssl x509 -req -extfile /dev/stdin -in certs/os/os.csr -CA certs/ca/ca.pem -CAkey certs/ca/ca.key -CAcreateserial -sha256 -out certs/os/os.pem
+printf "subjectAltName=DNS:localhost,IP:127.0.0.1,DNS:os,DNS:OS,DNS:os01,DNS:os02,DNS:os03" | openssl x509 -req -extfile /dev/stdin -in certs/os/os.csr -CA certs/ca/ca.pem -CAkey certs/ca/ca.key -CAcreateserial -sha256 -out certs/os/os.pem
 
 # OpenSearch Dashboards
 openssl genrsa -out certs/os-dashboards/os-dashboards-temp.key 2048

@@ -19,7 +19,7 @@ server.host: "0.0.0.0"
 #server.ssl.certificate: /usr/share/opensearch-dashboards/config/client-cert.pem
 #server.ssl.key: /usr/share/opensearch-dashboards/config/client-cert-key.pem
 csp.rules: ["script-src 'unsafe-eval' 'unsafe-inline'"]
-opensearch.hosts: [ "https://10.8.145.36:9201", "https://10.8.145.36:9202", "https://10.8.145.36:9203" ] # ["127.0.0.1:9200", "127.0.0.2:9200", "127.0.0.3:9200"]
+opensearch.hosts: [ "https://10.8.145.118:9201", "https://10.8.145.118:9202", "https://10.8.145.118:9203" ] # ["127.0.0.1:9200", "127.0.0.2:9200", "127.0.0.3:9200"]
 opensearch.ssl.verificationMode: none
 opensearch.username: kibanaserver
 opensearch.password: kibanaserver

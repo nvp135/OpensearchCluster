@@ -1,28 +1,68 @@
-cluster.name: os-cluster
+cluster.name: docker-cluster
+
+# Bind to all interfaces because we don't know what IP address Docker will assign to us.
 network.host: 0.0.0.0
+discovery.seed_hosts: 10.8.145.188:9301,10.8.145.188:9302,10.8.145.188:9303
+luster.initial_master_nodes: os01,os02,os03
+node.name: os01
 
-bootstrap.memory_lock: "true" # along with the memlock settings below, disables swapping
+# # minimum_master_nodes need to be explicitly set when bound on a public IP
+# # set to 1 to allow single node clusters
+# discovery.zen.minimum_master_nodes: 1
 
-discovery.seed_hosts: 10.8.145.36:9301,10.8.145.36:9302,10.8.145.36:9303 #os01,os02,os03 
-cluster.initial_master_nodes: os01 #,os01,os03
-cluster.routing.allocation.disk.threshold_enabled: true
-cluster.routing.allocation.disk.watermark.low: 93%
-cluster.routing.allocation.disk.watermark.high: 95%
+# Setting network.host to a non-loopback address enables the annoying bootstrap checks. "Single-node" mode disables them again.
+# discovery.type: single-node
 
-plugins.security.ssl.transport.pemkey_filepath: certificates/os/os.key # relative path
-plugins.security.ssl.transport.pemcert_filepath: certificates/os/os.pem
-plugins.security.ssl.http.pemkey_filepath: certificates/os/os.key
-plugins.security.ssl.http.pemcert_filepath: certificates/os/os.pem
-
-plugins.security.allow_unsafe_democertificates: true
-plugins.security.ssl.http.enabled: true
-plugins.security.ssl.http.pemtrustedcas_filepath: certificates/ca/ca.pem
-plugins.security.ssl.transport.enabled: true
-plugins.security.ssl.transport.pemtrustedcas_filepath: certificates/ca/ca.pem
+######## Start OpenSearch Security Demo Configuration ########
+# WARNING: revise all the lines below before you go into production
+plugins.security.ssl.transport.pemcert_filepath: esnode.pem
+plugins.security.ssl.transport.pemkey_filepath: esnode-key.pem
+plugins.security.ssl.transport.pemtrustedcas_filepath: root-ca.pem
 plugins.security.ssl.transport.enforce_hostname_verification: false
-plugins.security.restapi.roles_enabled: ["all_access"]
-
+plugins.security.ssl.http.enabled: true
+plugins.security.ssl.http.pemcert_filepath: esnode.pem
+plugins.security.ssl.http.pemkey_filepath: esnode-key.pem
+plugins.security.ssl.http.pemtrustedcas_filepath: root-ca.pem
+plugins.security.allow_unsafe_democertificates: true
+plugins.security.allow_default_init_securityindex: true
 plugins.security.authcz.admin_dn:
-  - 'CN=ADMIN,O=UN,L=UN,ST=UN,C=UN'
-plugins.security.nodes_dn:
-  - 'CN=OS,O=UN,L=UN,ST=UN,C=UN'
+  - CN=kirk,OU=client,O=client,L=test, C=de
+
+plugins.security.audit.type: internal_opensearch
+plugins.security.enable_snapshot_restore_privilege: true
+plugins.security.check_snapshot_restore_write_privileges: true
+plugins.security.restapi.roles_enabled: ["all_access", "security_rest_api_access"]
+plugins.security.system_indices.enabled: true
+plugins.security.system_indices.indices: [".opendistro-alerting-config", ".opendistro-alerting-alert*", ".opendistro-anomaly-results*", ".opendistro-anomaly-detector*", ".opendistro-anomaly-checkpoints", ".opendistro-anomaly-detection-state", ".opendistro-reports-*", ".opendistro-notifications-*", ".opendistro-notebooks", ".opensearch-observability", ".opendistro-asynchronous-search-response*", ".replication-metadata-store"]
+node.max_local_storage_nodes: 3
+######## End OpenSearch Security Demo Configuration ########
+
+
+#cluster.name: os-cluster
+#network.host: 0.0.0.0
+#
+#bootstrap.memory_lock: "true" # along with the memlock settings below, disables swapping
+#
+#discovery.seed_hosts: 10.8.145.188:9301,10.8.145.188:9302,10.8.145.188:9303 #os01,os02,os03 
+#cluster.initial_master_nodes: os01 #,os02,os03
+#cluster.routing.allocation.disk.threshold_enabled: true
+#cluster.routing.allocation.disk.watermark.low: 93%
+#cluster.routing.allocation.disk.watermark.high: 95%
+#
+#plugins.security.ssl.transport.pemkey_filepath: certificates/os/os.key # relative path
+#plugins.security.ssl.transport.pemcert_filepath: certificates/os/os.pem
+#plugins.security.ssl.http.pemkey_filepath: certificates/os/os.key
+#plugins.security.ssl.http.pemcert_filepath: certificates/os/os.pem
+#
+#plugins.security.allow_unsafe_democertificates: true
+#plugins.security.ssl.http.enabled: true
+#plugins.security.ssl.http.pemtrustedcas_filepath: certificates/ca/ca.pem
+#plugins.security.ssl.transport.enabled: true
+#plugins.security.ssl.transport.pemtrustedcas_filepath: certificates/ca/ca.pem
+#plugins.security.ssl.transport.enforce_hostname_verification: false
+#plugins.security.restapi.roles_enabled: ["all_access"]
+#
+#plugins.security.authcz.admin_dn:
+#  - 'CN=ADMIN,O=UN,L=UN,ST=UN,C=UN'
+#plugins.security.nodes_dn:
+#  - 'CN=OS,O=UN,L=UN,ST=UN,C=UN'
